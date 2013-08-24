@@ -5,6 +5,7 @@ Created on Aug 24, 2013
 '''
 
 import xml.dom.minidom
+import libxml2
 import time
 import re
 
@@ -12,7 +13,15 @@ class Snippet:
 
     xml = ''
     data = ''
-    
+    results = []
+
+    title = ''
+    tags = ''
+    language = ''
+    code = ''
+    date = ''
+    desc = ''
+
     # search snippet
     #   search by tags
     #   search by language
@@ -61,6 +70,7 @@ class Snippet:
                 self.data = self.data.replace('</root>',self.snippet)
         except:
             self.data = self.xml_decl + self.snippet
+        self.save_snippet()
 
     # Prettifying XML before storing it in a file
     def prettify(self):
@@ -71,3 +81,41 @@ class Snippet:
     def save_snippet(self):
         with open("data/code.xml",'w') as f:
             f.write(self.prettify())
+        print 'Code Snippet added to Library'
+        print 'File generated (for reference) at: data/code.xml'
+
+    # TODO: split tags and search individual tags to get the best match (in descending order)
+    # Search everything
+    def search(self, keyword):
+        doc = libxml2.parseFile('data/code.xml')
+        self.results = []
+        for node in doc.xpathEval('//snippet'):
+            if keyword in str(node):
+                self.results.append(node)
+        self.show_results()
+
+    # Display output
+    def show_results(self):
+        count = len(self.results)
+        print
+        print count, 'code snippet(s) found:'
+        # Display contents of each tag.
+        for snippet in self.results:
+            doc = libxml2.parseDoc(str(snippet))
+            print '-'*50
+            print 'Title:', self.getContent(doc, 'title')
+            print 'Description:', self.getContent(doc, 'desc')
+            print 'Language:', self.getContent(doc, 'lang')
+            print 'Code:', self.getContent(doc, 'code')
+            print 'Date:', self.getContent(doc, 'date')
+            print 'Tags:', self.getTags(doc, 'tags')
+
+    # Get contents of an element    
+    def getContent(self, doc, element):
+        for i in doc.xpathEval('//' + element):
+            return i.content
+    
+    # Get contents of a tag
+    def getTags(self, doc, tags):
+        for i in doc.xpathEval('//@tags'):
+            return i.content
