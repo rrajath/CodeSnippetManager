@@ -10,6 +10,17 @@ def main():
     print 'Code Snippet Manager'
 
     snippet = Snippet()
+        
+    if len(sys.argv) != 3:
+        print 'Usage: python main.py -s foo'
+    else:
+        if sys.argv[1] in ['-s','--search']:
+            keyword = sys.argv[2]
+            snippet.search(keyword)
+            print 'Exiting...Done'
+            sys.exit(0)
+        else:
+            print 'Usage: python main.py -s foo'
 
     choice = input('What do you want to do?\n1. Add\n2. Lookup\n3. Exit')
 

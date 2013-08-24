@@ -15,19 +15,6 @@ class Snippet:
     data = ''
     results = []
 
-    title = ''
-    tags = ''
-    language = ''
-    code = ''
-    date = ''
-    desc = ''
-
-    # search snippet
-    #   search by tags
-    #   search by language
-    #   search by title
-    #   search by date (that is, from some date onwards)
-
     # Add XML declaration in case the file is created for the first time
     def __init__(self):
         self.xml_decl = '<?xml version="1.0" encoding="UTF-8" ?><root>'
